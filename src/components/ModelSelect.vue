@@ -1,9 +1,15 @@
 <template>
   <q-select
     :model-value="modelValue"
-    dense outlined options-dense
-    :options="options" emit-value map-options
-    color="pri" label="模型" class="min-w-160px"
+    dense
+    outlined
+    options-dense
+    :options="options"
+    emit-value
+    map-options
+    color="pri"
+    label="模型"
+    class="min-w-160px"
     @update:model-value="v => emit('update:modelValue', v)"
   />
 </template>

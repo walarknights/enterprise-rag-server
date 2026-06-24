@@ -1,22 +1,62 @@
 <template>
   <q-page class="p-4">
-    <div class="text-lg font-600 mb-4">默认设置</div>
-    <q-card flat class="bg-sur-c rounded-xl max-w-2xl">
+    <div class="text-lg font-600 mb-4">
+      默认设置
+    </div>
+    <q-card
+      flat
+      class="bg-sur-c rounded-xl max-w-2xl"
+    >
       <q-card-section class="flex flex-col gap-4">
         <div>
-          <div class="text-sm font-500 mb-1">默认模型</div>
-          <div class="text-xs text-on-sur-var mb-2">用户端新建对话时默认选中的模型</div>
-          <q-select v-model="defaultModelName" outlined dense color="pri" clearable
-            emit-value map-options :options="modelOptions" label="选择默认模型" />
+          <div class="text-sm font-500 mb-1">
+            默认模型
+          </div>
+          <div class="text-xs text-on-sur-var mb-2">
+            用户端新建对话时默认选中的模型
+          </div>
+          <q-select
+            v-model="defaultModelName"
+            outlined
+            dense
+            color="pri"
+            clearable
+            emit-value
+            map-options
+            :options="modelOptions"
+            label="选择默认模型"
+          />
         </div>
         <div>
-          <div class="text-sm font-500 mb-1">默认知识库</div>
-          <div class="text-xs text-on-sur-var mb-2">用户端新建对话时默认检索的知识库</div>
-          <q-select v-model="defaultKnowledgeBaseId" outlined dense color="pri" clearable
-            emit-value map-options :options="kbOptions" label="选择默认知识库" />
+          <div class="text-sm font-500 mb-1">
+            默认知识库
+          </div>
+          <div class="text-xs text-on-sur-var mb-2">
+            用户端新建对话时默认检索的知识库
+          </div>
+          <q-select
+            v-model="defaultKnowledgeBaseId"
+            outlined
+            dense
+            color="pri"
+            clearable
+            emit-value
+            map-options
+            :options="kbOptions"
+            label="选择默认知识库"
+          />
         </div>
         <div>
-          <q-btn unelevated no-caps color="pri" text-color="on-pri" label="保存设置" :loading="saving" class="rounded-lg" @click="save" />
+          <q-btn
+            unelevated
+            no-caps
+            color="pri"
+            text-color="on-pri"
+            label="保存设置"
+            :loading="saving"
+            class="rounded-lg"
+            @click="save"
+          />
         </div>
       </q-card-section>
     </q-card>

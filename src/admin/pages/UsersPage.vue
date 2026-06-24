@@ -1,24 +1,75 @@
 <template>
   <q-page class="p-4">
-    <div class="text-lg font-600 mb-4">用户管理</div>
-    <q-card flat class="bg-sur-c rounded-xl">
-      <q-table flat :rows="users" :columns="columns" row-key="id" :loading="loading" class="bg-transparent" no-data-label="暂无用户">
+    <div class="text-lg font-600 mb-4">
+      用户管理
+    </div>
+    <q-card
+      flat
+      class="bg-sur-c rounded-xl"
+    >
+      <q-table
+        flat
+        :rows="users"
+        :columns="columns"
+        row-key="id"
+        :loading="loading"
+        class="bg-transparent"
+        no-data-label="暂无用户"
+      >
         <template #body-cell-role="props">
           <q-td :props="props">
-            <q-badge :color="props.row.role === 'admin' ? 'pri' : 'out'" :text-color="props.row.role === 'admin' ? 'on-pri' : 'on-sur'" :label="props.row.role === 'admin' ? '管理员' : '普通用户'" />
+            <q-badge
+              :color="props.row.role === 'admin' ? 'pri' : 'out'"
+              :text-color="props.row.role === 'admin' ? 'on-pri' : 'on-sur'"
+              :label="props.row.role === 'admin' ? '管理员' : '普通用户'"
+            />
           </q-td>
         </template>
         <template #body-cell-banned="props">
           <q-td :props="props">
-            <q-badge v-if="props.row.banned" color="err" text-color="on-err" label="已封禁" />
-            <span v-else class="text-on-sur-var">—</span>
+            <q-badge
+              v-if="props.row.banned"
+              color="err"
+              text-color="on-err"
+              label="已封禁"
+            />
+            <span
+              v-else
+              class="text-on-sur-var"
+            >—</span>
           </q-td>
         </template>
         <template #body-cell-actions="props">
-          <q-td :props="props" class="text-right">
-            <q-btn flat dense no-caps size="sm" :label="props.row.role === 'admin' ? '降为用户' : '设为管理员'" class="text-pri" @click="toggleRole(props.row)" />
-            <q-btn flat dense no-caps size="sm" :label="props.row.banned ? '解封' : '封禁'" @click="toggleBan(props.row)" />
-            <q-btn flat dense round size="sm" icon="sym_o_delete" class="text-err" @click="remove(props.row)" />
+          <q-td
+            :props="props"
+            class="text-right"
+          >
+            <q-btn
+              flat
+              dense
+              no-caps
+              size="sm"
+              :label="props.row.role === 'admin' ? '降为用户' : '设为管理员'"
+              class="text-pri"
+              @click="toggleRole(props.row)"
+            />
+            <q-btn
+              flat
+              dense
+              no-caps
+              size="sm"
+              :label="props.row.banned ? '解封' : '封禁'"
+              @click="toggleBan(props.row)"
+            />
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="sym_o_delete"
+              class="text-err"
+              @click="remove(props.row)"
+            />
           </q-td>
         </template>
       </q-table>
@@ -81,7 +132,9 @@ async function toggleBan(u: AdminUser) {
 
 function remove(u: AdminUser) {
   QDialog.create({
-    title: '删除用户', message: `确定删除「${u.email}」？`, cancel: true,
+    title: '删除用户',
+    message: `确定删除「${u.email}」？`,
+    cancel: true,
     ok: { label: '删除', color: 'err', textColor: 'on-err', unelevated: true, noCaps: true }
   }).onOk(async () => {
     const res = await authClient.admin.removeUser({ userId: u.id })

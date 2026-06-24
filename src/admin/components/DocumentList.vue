@@ -1,19 +1,49 @@
 <template>
   <div>
     <q-table
-      flat :rows="docs" :columns="columns" row-key="id"
-      :loading="loading" :pagination="{ rowsPerPage: 10 }"
-      class="bg-transparent" no-data-label="该知识库暂无文档"
+      flat
+      :rows="docs"
+      :columns="columns"
+      row-key="id"
+      :loading="loading"
+      :pagination="{ rowsPerPage: 10 }"
+      class="bg-transparent"
+      no-data-label="该知识库暂无文档"
     >
       <template #body-cell-actions="props">
-        <q-td :props="props" class="text-right">
-          <q-btn flat dense round size="sm" icon="sym_o_visibility" @click="preview(props.row)">
+        <q-td
+          :props="props"
+          class="text-right"
+        >
+          <q-btn
+            flat
+            dense
+            round
+            size="sm"
+            icon="sym_o_visibility"
+            @click="preview(props.row)"
+          >
             <q-tooltip>查看</q-tooltip>
           </q-btn>
-          <q-btn flat dense round size="sm" icon="sym_o_download" @click="download(props.row.id)">
+          <q-btn
+            flat
+            dense
+            round
+            size="sm"
+            icon="sym_o_download"
+            @click="download(props.row.id)"
+          >
             <q-tooltip>下载原文件</q-tooltip>
           </q-btn>
-          <q-btn flat dense round size="sm" icon="sym_o_delete" class="text-err" @click="remove(props.row)">
+          <q-btn
+            flat
+            dense
+            round
+            size="sm"
+            icon="sym_o_delete"
+            class="text-err"
+            @click="remove(props.row)"
+          >
             <q-tooltip>删除</q-tooltip>
           </q-btn>
         </q-td>
@@ -23,10 +53,19 @@
     <q-dialog v-model="previewOpen">
       <q-card class="bg-sur-c w-full max-w-3xl rounded-2xl">
         <q-card-section class="flex items-center gap-2 border-b border-out-var">
-          <q-icon name="sym_o_description" class="text-pri" />
+          <q-icon
+            name="sym_o_description"
+            class="text-pri"
+          />
           <span class="font-600 truncate">{{ previewDoc?.name }}</span>
           <q-space />
-          <q-btn v-close-popup flat dense round icon="sym_o_close" />
+          <q-btn
+            v-close-popup
+            flat
+            dense
+            round
+            icon="sym_o_close"
+          />
         </q-card-section>
         <q-card-section style="max-height: 70vh; overflow: auto">
           <MdPreview

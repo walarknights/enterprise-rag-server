@@ -1,8 +1,12 @@
 <template>
-  <q-scroll-area ref="scrollArea" class="h-full">
+  <q-scroll-area
+    ref="scrollArea"
+    class="h-full"
+  >
     <div class="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-5">
       <MessageItem
-        v-for="(m, i) in messages" :key="m.id"
+        v-for="(m, i) in messages"
+        :key="m.id"
         :message="m"
         :streaming="streaming && i === messages.length - 1"
       />

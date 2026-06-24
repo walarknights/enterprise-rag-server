@@ -2,28 +2,70 @@
   <q-page class="p-4">
     <div class="flex items-center justify-between mb-4">
       <span class="text-lg font-600">AI 服务商</span>
-      <q-btn unelevated no-caps color="pri" text-color="on-pri" icon="sym_o_add" label="添加服务商" class="rounded-lg" @click="openForm()" />
+      <q-btn
+        unelevated
+        no-caps
+        color="pri"
+        text-color="on-pri"
+        icon="sym_o_add"
+        label="添加服务商"
+        class="rounded-lg"
+        @click="openForm()"
+      />
     </div>
 
-    <q-card flat class="bg-sur-c rounded-xl">
+    <q-card
+      flat
+      class="bg-sur-c rounded-xl"
+    >
       <q-table
-        flat :rows="providers" :columns="columns" row-key="id" :loading="loading"
-        class="bg-transparent" no-data-label="暂无服务商"
+        flat
+        :rows="providers"
+        :columns="columns"
+        row-key="id"
+        :loading="loading"
+        class="bg-transparent"
+        no-data-label="暂无服务商"
       >
         <template #body-cell-enabled="props">
           <q-td :props="props">
-            <q-badge :color="props.row.enabled ? 'suc' : 'out'" :text-color="props.row.enabled ? 'on-suc' : 'on-sur'" :label="props.row.enabled ? '启用' : '停用'" />
+            <q-badge
+              :color="props.row.enabled ? 'suc' : 'out'"
+              :text-color="props.row.enabled ? 'on-suc' : 'on-sur'"
+              :label="props.row.enabled ? '启用' : '停用'"
+            />
           </q-td>
         </template>
         <template #body-cell-hasApiKey="props">
           <q-td :props="props">
-            <q-icon :name="props.row.hasApiKey ? 'sym_o_key' : 'sym_o_key_off'" :class="props.row.hasApiKey ? 'text-suc' : 'text-on-sur-var'" />
+            <q-icon
+              :name="props.row.hasApiKey ? 'sym_o_key' : 'sym_o_key_off'"
+              :class="props.row.hasApiKey ? 'text-suc' : 'text-on-sur-var'"
+            />
           </q-td>
         </template>
         <template #body-cell-actions="props">
-          <q-td :props="props" class="text-right">
-            <q-btn flat dense round size="sm" icon="sym_o_edit" @click="openForm(props.row)" />
-            <q-btn flat dense round size="sm" icon="sym_o_delete" class="text-err" @click="remove(props.row)" />
+          <q-td
+            :props="props"
+            class="text-right"
+          >
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="sym_o_edit"
+              @click="openForm(props.row)"
+            />
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="sym_o_delete"
+              class="text-err"
+              @click="remove(props.row)"
+            />
           </q-td>
         </template>
       </q-table>
@@ -31,17 +73,57 @@
 
     <q-dialog v-model="formOpen">
       <q-card class="bg-sur-c w-full max-w-440px rounded-2xl">
-        <q-card-section class="text-lg font-600">{{ form.id ? '编辑服务商' : '添加服务商' }}</q-card-section>
-        <q-card-section class="pt-0 flex flex-col gap-3">
-          <q-input v-model="form.name" outlined dense label="名称" color="pri" />
-          <q-input v-model="form.baseUrl" outlined dense label="Base URL（OpenAI 兼容，如 https://api.openai.com/v1）" color="pri" />
-          <q-input v-model="form.apiKey" outlined dense type="password" color="pri"
-            :label="form.id ? 'API Key（留空则不修改）' : 'API Key'" />
-          <q-toggle v-model="form.enabled" label="启用" color="pri" />
+        <q-card-section class="text-lg font-600">
+          {{ form.id ? '编辑服务商' : '添加服务商' }}
         </q-card-section>
-        <q-card-actions align="right" class="px-4 pb-4">
-          <q-btn flat no-caps label="取消" v-close-popup />
-          <q-btn unelevated no-caps color="pri" text-color="on-pri" label="保存" :loading="saving" @click="save" />
+        <q-card-section class="pt-0 flex flex-col gap-3">
+          <q-input
+            v-model="form.name"
+            outlined
+            dense
+            label="名称"
+            color="pri"
+          />
+          <q-input
+            v-model="form.baseUrl"
+            outlined
+            dense
+            label="Base URL（OpenAI 兼容，如 https://api.openai.com/v1）"
+            color="pri"
+          />
+          <q-input
+            v-model="form.apiKey"
+            outlined
+            dense
+            type="password"
+            color="pri"
+            :label="form.id ? 'API Key（留空则不修改）' : 'API Key'"
+          />
+          <q-toggle
+            v-model="form.enabled"
+            label="启用"
+            color="pri"
+          />
+        </q-card-section>
+        <q-card-actions
+          align="right"
+          class="px-4 pb-4"
+        >
+          <q-btn
+            flat
+            no-caps
+            label="取消"
+            v-close-popup
+          />
+          <q-btn
+            unelevated
+            no-caps
+            color="pri"
+            text-color="on-pri"
+            label="保存"
+            :loading="saving"
+            @click="save"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -116,7 +198,9 @@ async function save() {
 
 function remove(row: Provider) {
   QDialog.create({
-    title: '删除服务商', message: `确定删除「${row.name}」？`, cancel: true,
+    title: '删除服务商',
+    message: `确定删除「${row.name}」？`,
+    cancel: true,
     ok: { label: '删除', color: 'err', textColor: 'on-err', unelevated: true, noCaps: true }
   }).onOk(async () => {
     await unwrap(await api.providers[':id'].$delete({ param: { id: row.id } }))

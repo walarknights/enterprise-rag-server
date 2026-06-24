@@ -1,27 +1,62 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="v => emit('update:modelValue', v)">
+  <q-dialog
+    :model-value="modelValue"
+    @update:model-value="v => emit('update:modelValue', v)"
+  >
     <q-card class="bg-sur-c w-full max-w-480px rounded-2xl">
       <q-card-section class="flex items-center gap-2">
-        <q-icon name="sym_o_upload_file" size="24px" class="text-pri" />
+        <q-icon
+          name="sym_o_upload_file"
+          size="24px"
+          class="text-pri"
+        />
         <span class="text-lg font-600">上传文档</span>
       </q-card-section>
       <q-card-section class="pt-0">
         <q-file
-          v-model="files" multiple outlined dense use-chips color="pri"
+          v-model="files"
+          multiple
+          outlined
+          dense
+          use-chips
+          color="pri"
           label="选择文件（支持批量）"
           accept=".pdf,.docx,.xlsx,.pptx,.md,.txt"
           :disable="uploading"
         >
-          <template #prepend><q-icon name="sym_o_attach_file" /></template>
+          <template #prepend>
+            <q-icon name="sym_o_attach_file" />
+          </template>
         </q-file>
-        <div class="text-xs text-on-sur-var mt-2">支持 PDF / Word / Excel / PPT / Markdown / 纯文本</div>
-        <q-linear-progress v-if="uploading" indeterminate color="pri" class="mt-3 rounded" />
+        <div class="text-xs text-on-sur-var mt-2">
+          支持 PDF / Word / Excel / PPT / Markdown / 纯文本
+        </div>
+        <q-linear-progress
+          v-if="uploading"
+          indeterminate
+          color="pri"
+          class="mt-3 rounded"
+        />
       </q-card-section>
-      <q-card-actions align="right" class="px-4 pb-4">
-        <q-btn flat no-caps label="取消" :disable="uploading" @click="close" />
+      <q-card-actions
+        align="right"
+        class="px-4 pb-4"
+      >
         <q-btn
-          unelevated color="pri" text-color="on-pri" no-caps label="上传"
-          :loading="uploading" :disable="!files || files.length === 0"
+          flat
+          no-caps
+          label="取消"
+          :disable="uploading"
+          @click="close"
+        />
+        <q-btn
+          unelevated
+          color="pri"
+          text-color="on-pri"
+          no-caps
+          label="上传"
+          :loading="uploading"
+          :disable="!files || files.length === 0"
           @click="upload"
         />
       </q-card-actions>

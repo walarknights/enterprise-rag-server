@@ -2,25 +2,81 @@
   <q-page class="p-4">
     <div class="flex items-center justify-between mb-4">
       <span class="text-lg font-600">模型</span>
-      <q-btn unelevated no-caps color="pri" text-color="on-pri" icon="sym_o_add" label="添加模型" class="rounded-lg" :disable="providers.length === 0" @click="openForm()" />
+      <q-btn
+        unelevated
+        no-caps
+        color="pri"
+        text-color="on-pri"
+        icon="sym_o_add"
+        label="添加模型"
+        class="rounded-lg"
+        :disable="providers.length === 0"
+        @click="openForm()"
+      />
     </div>
 
-    <q-banner v-if="providers.length === 0" class="bg-warn-c text-on-warn-c rounded-xl mb-4">
+    <q-banner
+      v-if="providers.length === 0"
+      class="bg-warn-c text-on-warn-c rounded-xl mb-4"
+    >
       请先在「服务商」页面添加至少一个 AI 服务商。
     </q-banner>
 
-    <q-card flat class="bg-sur-c rounded-xl">
-      <q-table flat :rows="models" :columns="columns" row-key="id" :loading="loading" class="bg-transparent" no-data-label="暂无模型">
+    <q-card
+      flat
+      class="bg-sur-c rounded-xl"
+    >
+      <q-table
+        flat
+        :rows="models"
+        :columns="columns"
+        row-key="id"
+        :loading="loading"
+        class="bg-transparent"
+        no-data-label="暂无模型"
+      >
         <template #body-cell-isDefault="props">
           <q-td :props="props">
-            <q-badge v-if="props.row.isDefault" color="pri" text-color="on-pri" label="默认" />
-            <q-btn v-else flat dense no-caps size="sm" label="设为默认" class="text-pri" @click="setDefault(props.row.id)" />
+            <q-badge
+              v-if="props.row.isDefault"
+              color="pri"
+              text-color="on-pri"
+              label="默认"
+            />
+            <q-btn
+              v-else
+              flat
+              dense
+              no-caps
+              size="sm"
+              label="设为默认"
+              class="text-pri"
+              @click="setDefault(props.row.id)"
+            />
           </q-td>
         </template>
         <template #body-cell-actions="props">
-          <q-td :props="props" class="text-right">
-            <q-btn flat dense round size="sm" icon="sym_o_edit" @click="openForm(props.row)" />
-            <q-btn flat dense round size="sm" icon="sym_o_delete" class="text-err" @click="remove(props.row)" />
+          <q-td
+            :props="props"
+            class="text-right"
+          >
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="sym_o_edit"
+              @click="openForm(props.row)"
+            />
+            <q-btn
+              flat
+              dense
+              round
+              size="sm"
+              icon="sym_o_delete"
+              class="text-err"
+              @click="remove(props.row)"
+            />
           </q-td>
         </template>
       </q-table>
@@ -28,15 +84,54 @@
 
     <q-dialog v-model="formOpen">
       <q-card class="bg-sur-c w-full max-w-440px rounded-2xl">
-        <q-card-section class="text-lg font-600">{{ form.id ? '编辑模型' : '添加模型' }}</q-card-section>
-        <q-card-section class="pt-0 flex flex-col gap-3">
-          <q-select v-model="form.providerId" outlined dense label="服务商" color="pri" emit-value map-options :options="providerOptions" />
-          <q-input v-model="form.name" outlined dense label="模型名（上游真实名称，如 gpt-4o-mini）" color="pri" />
-          <q-input v-model="form.label" outlined dense label="显示名（可选）" color="pri" />
+        <q-card-section class="text-lg font-600">
+          {{ form.id ? '编辑模型' : '添加模型' }}
         </q-card-section>
-        <q-card-actions align="right" class="px-4 pb-4">
-          <q-btn flat no-caps label="取消" v-close-popup />
-          <q-btn unelevated no-caps color="pri" text-color="on-pri" label="保存" :loading="saving" @click="save" />
+        <q-card-section class="pt-0 flex flex-col gap-3">
+          <q-select
+            v-model="form.providerId"
+            outlined
+            dense
+            label="服务商"
+            color="pri"
+            emit-value
+            map-options
+            :options="providerOptions"
+          />
+          <q-input
+            v-model="form.name"
+            outlined
+            dense
+            label="模型名（上游真实名称，如 gpt-4o-mini）"
+            color="pri"
+          />
+          <q-input
+            v-model="form.label"
+            outlined
+            dense
+            label="显示名（可选）"
+            color="pri"
+          />
+        </q-card-section>
+        <q-card-actions
+          align="right"
+          class="px-4 pb-4"
+        >
+          <q-btn
+            flat
+            no-caps
+            label="取消"
+            v-close-popup
+          />
+          <q-btn
+            unelevated
+            no-caps
+            color="pri"
+            text-color="on-pri"
+            label="保存"
+            :loading="saving"
+            @click="save"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -116,7 +211,9 @@ async function setDefault(id: string) {
 
 function remove(row: Model) {
   QDialog.create({
-    title: '删除模型', message: `确定删除「${row.label || row.name}」？`, cancel: true,
+    title: '删除模型',
+    message: `确定删除「${row.label || row.name}」？`,
+    cancel: true,
     ok: { label: '删除', color: 'err', textColor: 'on-err', unelevated: true, noCaps: true }
   }).onOk(async () => {
     await unwrap(await api.models[':id'].$delete({ param: { id: row.id } }))

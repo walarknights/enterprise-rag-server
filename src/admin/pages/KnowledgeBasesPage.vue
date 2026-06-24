@@ -1,15 +1,28 @@
 <template>
   <q-page class="p-4">
-    <div class="flex gap-4 h-full" style="min-height: calc(100vh - 88px)">
+    <div
+      class="flex gap-4 h-full"
+      style="min-height: calc(100vh - 88px)"
+    >
       <!-- 知识库列表 -->
       <div class="w-72 shrink-0 flex flex-col">
         <div class="flex items-center justify-between mb-3">
           <span class="text-lg font-600">知识库</span>
-          <q-btn round unelevated size="sm" color="pri" text-color="on-pri" icon="sym_o_add" @click="openCreate" />
+          <q-btn
+            round
+            unelevated
+            size="sm"
+            color="pri"
+            text-color="on-pri"
+            icon="sym_o_add"
+            @click="openCreate"
+          />
         </div>
         <div class="flex flex-col gap-2 of-auto">
           <q-card
-            v-for="kb in kbs" :key="kb.id" flat
+            v-for="kb in kbs"
+            :key="kb.id"
+            flat
             class="cursor-pointer transition-all"
             :class="kb.id === selectedId ? 'bg-sec-c text-on-sec-c' : 'bg-sur-c hover:bg-sur-c-high'"
             @click="selectedId = kb.id"
@@ -17,43 +30,94 @@
             <q-card-section class="p-3">
               <div class="flex items-center gap-1">
                 <span class="font-600 truncate flex-1">{{ kb.name }}</span>
-                <q-badge v-if="kb.isDefault" color="pri" text-color="on-pri" label="默认" />
+                <q-badge
+                  v-if="kb.isDefault"
+                  color="pri"
+                  text-color="on-pri"
+                  label="默认"
+                />
               </div>
-              <div class="text-xs op-70 mt-1">{{ kb.documentCount }} 个文档</div>
-              <div v-if="kb.description" class="text-xs op-70 mt-1 truncate">{{ kb.description }}</div>
+              <div class="text-xs op-70 mt-1">
+                {{ kb.documentCount }} 个文档
+              </div>
+              <div
+                v-if="kb.description"
+                class="text-xs op-70 mt-1 truncate"
+              >
+                {{ kb.description }}
+              </div>
             </q-card-section>
           </q-card>
-          <div v-if="kbs.length === 0" class="text-center text-sm text-on-sur-var py-6">暂无知识库</div>
+          <div
+            v-if="kbs.length === 0"
+            class="text-center text-sm text-on-sur-var py-6"
+          >
+            暂无知识库
+          </div>
         </div>
       </div>
 
       <!-- 文档管理 -->
       <div class="flex-1 min-w-0">
-        <q-card v-if="selected" flat class="bg-sur-c rounded-xl">
+        <q-card
+          v-if="selected"
+          flat
+          class="bg-sur-c rounded-xl"
+        >
           <q-card-section class="flex items-center gap-2 flex-wrap">
             <div class="flex-1 min-w-0">
-              <div class="text-lg font-600 truncate">{{ selected.name }}</div>
-              <div class="text-xs text-on-sur-var">{{ selected.description || '无描述' }}</div>
+              <div class="text-lg font-600 truncate">
+                {{ selected.name }}
+              </div>
+              <div class="text-xs text-on-sur-var">
+                {{ selected.description || '无描述' }}
+              </div>
             </div>
             <q-btn
-              v-if="!selected.isDefault" outline no-caps size="sm" color="pri" icon="sym_o_star"
-              label="设为默认" class="rounded-lg" @click="setDefault(selected.id)"
+              v-if="!selected.isDefault"
+              outline
+              no-caps
+              size="sm"
+              color="pri"
+              icon="sym_o_star"
+              label="设为默认"
+              class="rounded-lg"
+              @click="setDefault(selected.id)"
             />
             <q-btn
-              outline no-caps size="sm" color="err" icon="sym_o_delete"
-              label="删除" class="rounded-lg" @click="removeKb(selected)"
+              outline
+              no-caps
+              size="sm"
+              color="err"
+              icon="sym_o_delete"
+              label="删除"
+              class="rounded-lg"
+              @click="removeKb(selected)"
             />
             <q-btn
-              unelevated no-caps size="sm" color="pri" text-color="on-pri" icon="sym_o_upload"
-              label="上传文档" class="rounded-lg" @click="uploadOpen = true"
+              unelevated
+              no-caps
+              size="sm"
+              color="pri"
+              text-color="on-pri"
+              icon="sym_o_upload"
+              label="上传文档"
+              class="rounded-lg"
+              @click="uploadOpen = true"
             />
           </q-card-section>
           <q-separator class="bg-out-var" />
           <q-card-section>
-            <DocumentList ref="docList" :knowledge-base-id="selected.id" />
+            <DocumentList
+              ref="docList"
+              :knowledge-base-id="selected.id"
+            />
           </q-card-section>
         </q-card>
-        <div v-else class="flex items-center justify-center h-full text-on-sur-var">
+        <div
+          v-else
+          class="flex items-center justify-center h-full text-on-sur-var"
+        >
           请选择或创建一个知识库
         </div>
       </div>
@@ -61,7 +125,8 @@
 
     <DocumentUploadDialog
       v-if="selected"
-      v-model="uploadOpen" :knowledge-base-id="selected.id"
+      v-model="uploadOpen"
+      :knowledge-base-id="selected.id"
       @uploaded="onUploaded"
     />
   </q-page>

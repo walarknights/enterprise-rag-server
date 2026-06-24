@@ -43,7 +43,7 @@ const app = new Hono<AuthEnv>()
         ${kbFilter}
       ORDER BY bm25(document_fts)
       LIMIT ${limit}
-    `) as Row[]
+    `)
 
     const results: SearchResult[] = rows.map(r => ({
       id: r.id,
