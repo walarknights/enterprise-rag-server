@@ -1,3 +1,24 @@
 {
-  "extends": "./.quasar/tsconfig.json"
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "lib": ["ESNext"],
+    "types": ["bun-types"]
+  },
+  "include": [
+    "src-server/**/*.ts",
+    "drizzle.config.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

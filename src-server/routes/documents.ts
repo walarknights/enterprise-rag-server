@@ -4,10 +4,10 @@ import { zValidator } from '@hono/zod-validator'
 import { desc, eq, inArray } from 'drizzle-orm'
 import { db } from '../utils/db'
 import { document, knowledgeBase } from '../schema'
-import { genId } from 'app/src-shared/utils/id'
+import { genId } from '../utils/id'
 import { requireAdmin, requireAuth, type AuthEnv } from '../utils/auth-guard'
 import { parseFile } from '../utils/file-parser'
-import { getExt } from 'app/src-shared/utils/functions'
+import { getExt } from '../utils/functions'
 import { UPLOAD_DIR } from '../utils/config'
 import { join } from 'node:path'
 import { rm } from 'node:fs/promises'
@@ -28,9 +28,12 @@ const app = new Hono<AuthEnv>()
   // 批量上传文档（multipart/form-data）
   .post('/upload', requireAdmin, async c => {
     const form = await c.req.formData()
-    const knowledgeBaseId = form.get('knowledgeBaseId')?.toString()
-    if (!knowledgeBaseId) return c.json({ error: 'knowledgeBaseId required' }, 400)
-    const kb = await db.select().from(knowledgeBase).where(eq(knowledgeBase.id, knowledgeBaseId)).get()
+    const knowledgeBaseIdValue = form.get('knowledgeBaseId')
+    if (typeof knowledgeBaseIdValue !== 'string' || !knowledgeBaseIdValue) {
+      return c.json({ error: 'knowledgeBaseId required' }, 400)
+    }
+    const knowledgeBaseId = knowledgeBaseIdValue
+    const kb = db.select().from(knowledgeBase).where(eq(knowledgeBase.id, knowledgeBaseId)).get()
     if (!kb) return c.json({ error: 'Knowledge base not found' }, 404)
 
     const files = form.getAll('files').filter((f): f is File => f instanceof File)
@@ -92,18 +95,18 @@ const app = new Hono<AuthEnv>()
       content: r.content
     })))
   })
-  // 单个文档完整内容（文档页使用）
-  .get('/:id', requireAuth, async c => {
+  // 单个文档完整内容
+  .get('/:id', requireAuth, c => {
     const id = c.req.param('id')
-    const row = await db.select().from(document).where(eq(document.id, id)).get()
+    const row = db.select().from(document).where(eq(document.id, id)).get()
     if (!row) return c.json({ error: 'Not found' }, 404)
-    const kb = await db.select({ name: knowledgeBase.name }).from(knowledgeBase).where(eq(knowledgeBase.id, row.knowledgeBaseId)).get()
+    const kb = db.select({ name: knowledgeBase.name }).from(knowledgeBase).where(eq(knowledgeBase.id, row.knowledgeBaseId)).get()
     return c.json({ ...row, knowledgeBaseName: kb?.name ?? '' })
   })
   // 下载原始文件
   .get('/:id/download', requireAuth, async c => {
     const id = c.req.param('id')
-    const row = await db.select().from(document).where(eq(document.id, id)).get()
+    const row = db.select().from(document).where(eq(document.id, id)).get()
     if (!row) return c.json({ error: 'Not found' }, 404)
     const file = Bun.file(join(UPLOAD_DIR, row.filePath))
     if (!(await file.exists())) return c.json({ error: 'File missing' }, 404)

@@ -1,92 +1,49 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import pluginVue from 'eslint-plugin-vue'
-import pluginQuasar from '@quasar/app-vite/eslint'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import neostandard from 'neostandard'
+import tseslint from 'typescript-eslint'
 
-export default defineConfigWithVueTs(
+const nodeGlobals = {
+  ...globals.node,
+  Bun: 'readonly'
+}
+
+const typeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map(config => ({
+  ...config,
+  files: ['**/*.ts']
+}))
+
+export default tseslint.config(
   {
-    /**
-     * Ignore the following files.
-     * Please note that pluginQuasar.configs.recommended() already ignores
-     * the "node_modules" folder for you (and all other Quasar project
-     * relevant folders and files).
-     *
-     * ESLint requires "ignores" key to be the only one in this object
-     */
-    // ignores: []
+    ignores: ['dist/**', 'node_modules/**', '.logs/**', 'data/**', 'uploads/**']
   },
-
-  pluginQuasar.configs.recommended(),
-  js.configs.recommended,
-  neostandard(),
-
-  /**
-   * https://eslint.vuejs.org
-   *
-   * pluginVue.configs.base
-   *   -> Settings and rules to enable correct ESLint parsing.
-   * pluginVue.configs[ 'flat/essential']
-   *   -> base, plus rules to prevent errors or unintended behavior.
-   * pluginVue.configs["flat/strongly-recommended"]
-   *   -> Above, plus rules to considerably improve code readability and/or dev experience.
-   * pluginVue.configs["flat/recommended"]
-   *   -> Above, plus rules to enforce subjective community defaults to ensure consistency.
-   */
-  pluginVue.configs['flat/strongly-recommended'],
-
   {
-    files: ['**/*.ts', '**/*.vue'],
-    rules: {
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports' }
-      ]
-    }
-  },
-  // https://github.com/vuejs/eslint-config-typescript
-  vueTsConfigs.recommendedTypeChecked,
-
-  {
+    files: ['**/*.js'],
+    ...js.configs.recommended,
     languageOptions: {
+      ...js.configs.recommended.languageOptions,
       ecmaVersion: 'latest',
       sourceType: 'module',
-
-      globals: {
-        ...globals.browser,
-        ...globals.node, // SSR, Electron, config files
-        process: 'readonly', // process.env.*
-        ga: 'readonly', // Google Analytics
-        cordova: 'readonly',
-        Capacitor: 'readonly',
-        chrome: 'readonly', // BEX related
-        browser: 'readonly' // BEX related
-      }
-    },
-
-    // add your custom rules here
-    rules: {
-      'prefer-promise-reject-errors': 'off',
-
-      // allow debugger during development only
-      'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-
-      '@stylistic/space-before-function-paren': 'off',
-      '@stylistic/comma-dangle': ['error', 'never'],
-      '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
-
-      '@typescript-eslint/no-explicit-any': 'off'
+      globals: nodeGlobals
     }
   },
-
   {
-    files: ['src-pwa/custom-service-worker.ts'],
+    files: ['**/*.ts'],
     languageOptions: {
-      globals: {
-        ...globals.serviceworker
-      }
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: process.cwd()
+      },
+      globals: nodeGlobals
+    }
+  },
+  ...typeCheckedConfigs,
+  {
+    files: ['**/*.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
 )

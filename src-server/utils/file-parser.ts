@@ -1,5 +1,5 @@
 import { unzipSync, strFromU8 } from 'fflate'
-import { getExt } from 'app/src-shared/utils/functions'
+import { getExt } from './functions'
 
 export interface ParseResult {
   content: string
@@ -20,10 +20,20 @@ async function parseDocx(buf: ArrayBuffer): Promise<ParseResult> {
   return { content: result.value, language: 'html' }
 }
 
+function stringifyCell(value: unknown) {
+  if (value == null) return ''
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    return String(value)
+  }
+  if (value instanceof Date) return value.toISOString()
+  return JSON.stringify(value) ?? ''
+}
+
 function rowsToMarkdown(rows: unknown[][]) {
   if (!rows.length) return ''
-  const head = rows[0].map(c => (c == null ? '' : String(c)))
-  const body = rows.slice(1).map(r => r.map(c => (c == null ? '' : String(c))))
+  const head = rows[0].map(stringifyCell)
+  const body = rows.slice(1).map(r => r.map(stringifyCell))
   const headerLine = '| ' + head.join(' | ') + ' |'
   const sepLine = '| ' + head.map(() => '---').join(' | ') + ' |'
   const bodyLines = body.map(r => '| ' + r.join(' | ') + ' |')
@@ -34,20 +44,22 @@ async function parseXlsx(buf: ArrayBuffer): Promise<ParseResult> {
   const { read, utils } = await import('xlsx-republish')
   const workbook = read(new Uint8Array(buf))
   const content = workbook.SheetNames.map(name => {
-    const rows = utils.sheet_to_json(workbook.Sheets[name], { header: 1 })
+    const rows = utils.sheet_to_json<unknown[]>(workbook.Sheets[name], { header: 1 })
     return `## ${name}\n\n${rowsToMarkdown(rows)}`
   }).join('\n\n')
   return { content, language: 'markdown' }
 }
 
 function parsePptx(buf: ArrayBuffer): ParseResult {
-  const files = unzipSync(new Uint8Array(buf))
+  const files: Record<string, Uint8Array> = unzipSync(new Uint8Array(buf))
   const slideNames = Object.keys(files)
     .filter(name => /^ppt\/slides\/slide\d+\.xml$/.test(name))
     .sort((a, b) => parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]))
 
   const slides = slideNames.map((name, i) => {
-    const xml = strFromU8(files[name])
+    const slideFile = files[name]
+    if (!(slideFile instanceof Uint8Array)) return `## 幻灯片 ${i + 1}\n\n`
+    const xml = strFromU8(slideFile)
     // 服务端无 DOMParser，使用正则提取 <a:t> 文本节点
     const texts = Array.from(xml.matchAll(/<a:t>([\s\S]*?)<\/a:t>/g)).map(m =>
       m[1].replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
@@ -59,7 +71,7 @@ function parsePptx(buf: ArrayBuffer): ParseResult {
 
 async function parsePdf(buf: ArrayBuffer): Promise<ParseResult> {
   const { extractText, getDocumentProxy } = await import('unpdf')
-  const pdf = await getDocumentProxy(new Uint8Array(buf))
+  const pdf: Parameters<typeof extractText>[0] = await getDocumentProxy(new Uint8Array(buf))
   const { text } = await extractText(pdf, { mergePages: true })
   return { content: typeof text === 'string' ? text : (text as string[]).join('\n\n'), language: 'text' }
 }

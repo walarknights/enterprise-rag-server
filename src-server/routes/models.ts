@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../utils/db'
 import { model, provider } from '../schema'
-import { genId } from 'app/src-shared/utils/id'
+import { genId } from '../utils/id'
 import { requireAdmin, requireAuth, type AuthEnv } from '../utils/auth-guard'
 import { updateGlobalSettings } from '../utils/seed'
 
@@ -60,7 +60,7 @@ const app = new Hono<AuthEnv>()
   })
   .post('/:id/default', requireAdmin, async c => {
     const id = c.req.param('id')
-    const m = await db.select().from(model).where(eq(model.id, id)).get()
+    const m = db.select().from(model).where(eq(model.id, id)).get()
     if (!m) return c.json({ error: 'Not found' }, 404)
     await db.update(model).set({ isDefault: false })
     await db.update(model).set({ isDefault: true }).where(eq(model.id, id))

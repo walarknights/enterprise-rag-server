@@ -3,14 +3,14 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { admin } from 'better-auth/plugins'
 import { db } from '../utils/db'
 import { user, session, account, verification } from '../schema/auth'
-import { SITE_NAME, SERVER_URL, FRONT_URL, ADMIN_URL, BETTER_AUTH_SECRET } from '../utils/config'
-import { genId } from 'app/src-shared/utils/id'
+import { SITE_NAME, SERVER_URL, TRUSTED_ORIGINS, BETTER_AUTH_SECRET } from '../utils/config'
+import { genId } from '../utils/id'
 
 export const auth = betterAuth({
   appName: SITE_NAME,
   baseURL: SERVER_URL,
   secret: BETTER_AUTH_SECRET,
-  trustedOrigins: [FRONT_URL, ADMIN_URL],
+  trustedOrigins: TRUSTED_ORIGINS,
   database: drizzleAdapter(db, {
     provider: 'sqlite',
     schema: { user, session, account, verification }

@@ -4,7 +4,7 @@ import { zValidator } from '@hono/zod-validator'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../utils/db'
 import { provider } from '../schema'
-import { genId } from 'app/src-shared/utils/id'
+import { genId } from '../utils/id'
 import { requireAdmin, type AuthEnv } from '../utils/auth-guard'
 
 const app = new Hono<AuthEnv>()

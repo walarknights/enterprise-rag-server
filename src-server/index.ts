@@ -10,7 +10,7 @@ import models from './routes/models'
 import settings from './routes/settings'
 import ai from './routes/ai'
 import { seed } from './utils/seed'
-import { sizeBytes } from 'app/src-shared/utils/functions'
+import { sizeBytes } from './utils/functions'
 import { PORT, UPLOAD_DIR } from './utils/config'
 
 mkdirSync(UPLOAD_DIR, { recursive: true })
